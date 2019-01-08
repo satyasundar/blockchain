@@ -1,0 +1,71 @@
+pragma solidity ^0.5.0;
+
+
+contract Owned {
+    address public owner;
+    
+    modifier onlyOwner {
+        require(owner == msg.sender);
+        _;
+    }
+    constructor() public {
+        owner = msg.sender;
+    }
+    
+    function changeOwner(address newOwner) public onlyOwner returns (bool success) {
+        owner = newOwner;
+        return true;
+    }
+} 
+
+
+contract Stoppable is Owned {
+    bool isRunning;
+    
+    event LogPauseContract(address sender);
+    event LogResumedContract(address sender);
+    
+    modifier onlyIfRunning{
+        require(isRunning);
+        _;
+    }
+    
+    constructor() public {
+        isRunning = true;
+    }
+    
+    function pauseContract() public onlyOwner onlyIfRunning returns (bool success) {
+        isRunning = false;
+        emit LogPauseContract(msg.sender);
+        return true;
+    }
+    function resumeContract() public onlyOwner returns (bool success) {
+        require(isRunning);
+        isRunning = true;
+        emit LogResumedContract(msg.sender);
+        return true;
+    }
+    
+    
+}
+
+contract MyContract is Stoppable {
+    bool isAlive;
+    
+    event LogSetIsAlive(address indexed sender, bool newState);
+    
+    constructor() public {
+        isAlive = true;
+    }
+    function getIsAlive() public view returns(bool isIndeed){
+        return isAlive;
+    }
+    function add(uint x, uint y) public pure returns(uint sum) {
+        return x+y;
+    }
+    function setIsAlive(bool input) public onlyOwner onlyIfRunning returns (bool success){
+        isAlive = input;
+        emit LogSetIsAlive(msg.sender,input);
+        return true;
+    }
+}
