@@ -1,0 +1,2 @@
+To hard compile in solc
+$ solc --combined-json abi,bin Faucet.sol > Faucet.json
