@@ -1,2 +1,45 @@
 To hard compile in solc
 $ solc --combined-json abi,bin Faucet.sol > Faucet.json
+> var faucetComiled = {...Faucet.json...}
+> var faucetContractKey = "/home/xxx/Faucet.sol:Faucet";
+> typeof faucetCompiled.contracts[faucetContractKey].abi;
+> var faucetContract = eth.contract(JSON.parse(faucetCompiled.contracts[faucetContractKey].abi));
+> personal.unlockAccount(eth.coinbase)
+> var deployTransactionObject = { from:eth.coinbase, data: "0x" + faucetCompiled.contracts[faucetContractKey].bin, value: web3.toWei(1,"ether"), gas: 1000000  };
+> var faucetInstance = faucetContract.new(deployTransactionObject);
+
+The contract's deployed address will be determined using hash of sender's address and sender's transaction nonce. But it will onle be assigned after mining is done.
+
+> faucetInstance
+This will not have address of the contract set yet as below.
+
+  }],
+  address: undefined,
+  transactionHash: "0x50ad7795aafb79703ed5ed6199d0491744bf82adb3d573b70f6e2c0a46253f43"
+}
+
+> miner.start()
+> miner.stop()
+
+> faucetInstance
+> Now after mined the address of the contract is set.
+
+}],
+  address: "0x44473ada272c1113f3d32a9bf9460e045a6021bf",
+  transactionHash: "0x50ad7795aafb79703ed5ed6199d0491744bf82adb3d573b70f6e2c0a46253f43",
+  allEvents: function(),
+
+> eth.getTransactionReceipt(faucetInstance.transactionHash)
+> var faucetAddress = eth.getTransactionReceipt(faucetInstance.transactionHash).contractAddress;
+undefined
+> faucetAddress
+"0x44473ada272c1113f3d32a9bf9460e045a6021bf"
+> var deployedBinary = eth.getCode(faucetAddress);
+> eth.getBalance(faucetAddress)
+> web3.fromWei(eth.getBalance(faucetAddress),"ether")
+> faucetInstance.getBalance.call()
+// The above call() method of calling a function doesn't create transaction so no gas cost used.
+
+> personal.unlockAccount(eth.coinbase,"password",3600)
+
+>var sendWeiTx = faucetInstance.sendWei( eth.accounts[2], { from: eth.accounts[0] } );
