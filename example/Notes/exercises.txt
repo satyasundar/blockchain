@@ -42,4 +42,21 @@ undefined
 
 > personal.unlockAccount(eth.coinbase,"password",3600)
 
->var sendWeiTx = faucetInstance.sendWei( eth.accounts[2], { from: eth.accounts[0] } );
+> var sendWeiTx = faucetInstance.sendWei( eth.accounts[2], { from: eth.accounts[0] } );
+
+The equivalent transaction which we would have to do in a hard way is as below. Contract Instance made the above transaction is fo us.
+
+> eth.sendTransaction({
+  from: eth.accounts[0],
+  to: faucetInstance.address,
+  data: web3.sha3("sendWei(address)").substring(0,10) + "000000000000000000000000" + eth.accounts[1].replace("0x", ""),
+  gas: 90000,
+  gasPrice: eth.gasPrice });
+
+To replenish the faucet again..
+> eth.sendTransaction( { from: eth.accounts[0], to:faucetAddress, value: web3.toWei(1,"ether") } );
+
+Try the same transaction of sendWei() in a hard way.
+
+> var sendWeiData = faucetInstance.sendWei.getData( eth.accounts[2] );
+> eth.sendTransaction( {from: eth.accounts[0], to: faucetAddress, data: sendWeiData, gas: 90000, gasPrice: 20000000000} );
