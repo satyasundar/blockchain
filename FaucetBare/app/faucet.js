@@ -2,7 +2,7 @@ if (typeof web3 !== 'undefined') {
 	// Dont loose an existing web3 provider like Mist or Metamask
 	web3 = new Web3(web3.currentProvider);
 } else {
-	//Set the provider you want fomr local
+	//Set the provider you want from local
 	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
